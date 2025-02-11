@@ -51,7 +51,7 @@ const Login = () => {
         const user_token = res.data.token;
         const userData = res.data
         localStorage.setItem("token", user_token);
-        localStorage.setItem("userData", userData);
+        localStorage.setItem("userData", JSON.stringify(userData));
 
         navigate("/Home");
       } catch (error) {

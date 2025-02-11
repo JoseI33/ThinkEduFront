@@ -10,6 +10,7 @@ function ColorSchemesExample() {
     const navigate = useNavigate();
     const handleLogOut = useCallback(()=>{
       localStorage.removeItem('token')
+      localStorage.removeItem('userData')
       navigate('/')
     },[])
   return (
