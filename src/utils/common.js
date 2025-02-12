@@ -1,3 +1,4 @@
+import instance from "../../api/axios"
 export const getUserData = () =>{
     const userDataLocalStorage = localStorage.getItem('userData')
     if (userDataLocalStorage) return JSON.parse(userDataLocalStorage)
@@ -5,4 +6,32 @@ export const getUserData = () =>{
 }
 export const getToken = () =>{
     return localStorage.getItem('token')
+}
+
+export const getAllStudents = async() =>{
+    try{
+       return (await instance.get('/student')).data
+    } 
+    catch(e){
+        console.log(e)
+        return []
+    }
+}
+export const createNewStudent = async(student) =>{
+    try{
+       return (await instance.post('/student', student)).data
+    } 
+    catch(e){
+        console.log(e)
+        return []
+    }
+}
+export const editStudent = async(student, id) =>{
+    try{
+       return (await instance.put(`/student/${id}`, student)).data
+    } 
+    catch(e){
+        console.log(e)
+        return []
+    }
 }
