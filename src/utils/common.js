@@ -35,6 +35,15 @@ export const editStudent = async(student, id) =>{
         return []
     }
 }
+export const changeStudentState = async(body, id) =>{
+    try{
+       return (await instance.patch(`/student/${id}/state`, body)).data
+    } 
+    catch(e){
+        console.log(e)
+        return []
+    }
+}
 export const createAssignments = async(body) =>{
     try{
        return (await instance.post(`/assignment`, body)).data
@@ -47,6 +56,15 @@ export const createAssignments = async(body) =>{
 export const editAssignments = async(body) =>{
     try{
        return (await instance.put(`/assignment`, body)).data
+    } 
+    catch(e){
+        console.log(e)
+        return []
+    }
+}
+export const getStudentById = async(id) =>{
+    try{
+       return (await instance.get(`/student/${id}`)).data
     } 
     catch(e){
         console.log(e)

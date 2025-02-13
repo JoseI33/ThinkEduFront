@@ -1,38 +1,62 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Accordion from "react-bootstrap/Accordion";
 import Table from "react-bootstrap/Table";
 import ColorSchemesExample2 from "./NavbarSubject";
+import { useParams } from "react-router-dom";
+import { getStudentById } from "../../../utils/common";
 
 function Subjects() {
-  const years = [1, 2, 3, 4];
-  const subjects = [
-    "Matemáticas",
-    "Lengua y Literatura",
-    "Biología",
-    "Física",
-    "Química",
-    "Economía",
-    "Geografía",
-    "Historia",
-    "Educación Física",
-  ];
+  const { id } = useParams(); // Get the student id from the route params
+  const [student, setStudent] = useState(null);
 
-  const generateRandomGrade = () => {
-    return (Math.random() * 7 + 4).toFixed(1);
+  useEffect(() => {
+    // Fetch student data by id
+    const fetchStudent = async () => {
+      try {
+        const studentData = await getStudentById(id);
+        setStudent(studentData);
+      } catch (error) {
+        console.error("Error fetching student data:", error);
+      }
+    };
+
+    fetchStudent();
+  }, [id]);
+
+  if (!student) {
+    return <div>Loading student data...</div>;
+  }
+
+  const subjects = {
+    Mathematics:"Matemáticas",
+    LanguageAndLiterature:"Lengua y Literatura",
+    Biology:"Biología",
+    Physics: "Física",
+    Chemistry: "Química",
+    Economics: "Economía",
+    Geography: "Geografía",
+    History: "Historia",
+    PhysicalEducation:"Educación Física",
+};
+
+  const generateGradeForDegree = (degree, subject) => {
+    // Find the assignment corresponding to the degree
+    const assignment = student.assignments.find(
+      (assignment) => assignment.degree === degree
+    );
+    // Return the grade for the subject, or "No grade" if not found
+    return assignment ? assignment.subjects[subject] : "No grade";
   };
 
   return (
     <div>
-      {/* Agrega ColorSchemesExample2 aquí */}
       <ColorSchemesExample2 />
-
-      {/* Agrega el título "Alumno Lionel Messi" */}
-      <h3>Alumno: Lionel Andres Messi 🐐</h3>
+      <h3>Alumno: {student.name} {student.lastName}</h3>
 
       <Accordion defaultActiveKey="0">
-        {years.map((year, index) => (
+        {student.assignments.map((assignment, index) => (
           <Accordion.Item eventKey={index.toString()} key={index}>
-            <Accordion.Header>Año {year}</Accordion.Header>
+            <Accordion.Header>Año {assignment.degree}</Accordion.Header>
             <Accordion.Body>
               <Table striped bordered hover>
                 <thead>
@@ -42,10 +66,10 @@ function Subjects() {
                   </tr>
                 </thead>
                 <tbody>
-                  {subjects.map((subject, subjectIndex) => (
+                  {Object.keys(subjects).map((subject, subjectIndex) => (
                     <tr key={subjectIndex}>
-                      <td>{subject}</td>
-                      <td>{generateRandomGrade()}</td>
+                      <td>{subjects[subject]}</td>
+                      <td>{generateGradeForDegree(assignment.degree, subject)}</td>
                     </tr>
                   ))}
                 </tbody>

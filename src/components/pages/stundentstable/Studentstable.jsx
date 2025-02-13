@@ -4,18 +4,31 @@ import ColorSchemesExample3 from "./NavbarStudent";
 import useStudentsTable from "./hooks/useStudentsTable";
 import StudentModal from "./StudentModal";
 import StudentAssignmentsModal from "./StudentAssignmentsModal";
-import { createNewStudent, editStudent, createAssignments, editAssignments } from "../../../utils/common"; // Import API functions
+import StudentChangeStateModal from "./StudentChangeStateModal";
+import { createNewStudent, editStudent, createAssignments, editAssignments, changeStudentState } from "../../../utils/common";
 import { studentDataInitialValues } from "../../../common/initialStates";
+import "bootstrap-icons/font/bootstrap-icons.css";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 function Studentstable() {
   const { studentsData, refreshStudentsData } = useStudentsTable();
   const [showModal, setShowModal] = useState(false);
-  const [selectedStudent, setSelectedStudent] = useState(null); // Store selected student for editing
+  const [selectedStudent, setSelectedStudent] = useState(null);
   const [studentData, setStudentData] = useState(studentDataInitialValues);
 
-  // State for Assignment Modal
+
   const [showAssignmentModal, setShowAssignmentModal] = useState(false);
   const [selectedStudentForAssignments, setSelectedStudentForAssignments] = useState(null);
+
+
+  const [showActivationModal, setShowActivationModal] = useState(false);
+  const [studentToActivate, setStudentToActivate] = useState(null);
+  const navigate = useNavigate();
+
+  const handleNavigateToSubjects = (studentId) => {
+    navigate(`/Subjects/${studentId}`);
+  };
 
   const handleCloseModal = () => {
     setShowModal(false);
@@ -36,6 +49,26 @@ function Studentstable() {
   const handleCloseAssignmentModal = () => {
     setShowAssignmentModal(false);
     setSelectedStudentForAssignments(null);
+  };
+
+
+  const handleOpenActivationModal = (student) => {
+    setStudentToActivate(student);
+    setShowActivationModal(true);
+  };
+
+  const handleCloseActivationModal = () => {
+    setShowActivationModal(false);
+    setStudentToActivate(null);
+  };
+
+  const handleStudentStateChange = async () => {
+    if (studentToActivate) {
+      const newState = !studentToActivate.active;
+      await changeStudentState({ estado: newState }, studentToActivate._id);
+      await refreshStudentsData();
+      handleCloseActivationModal();
+    }
   };
 
   return (
@@ -75,21 +108,66 @@ function Studentstable() {
                       </span>
                     </td>
                     <td>
-                      <div className="d-flex flex-column">
-                        <Button
-                          variant="primary"
-                          className="mb-2"
-                          onClick={() => handleOpenModal(student)}
-                        >
-                          Editar
-                        </Button>
-                        <Button
-                          variant="info"
-                          onClick={() => handleOpenAssignmentModal(student)}
-                        >
-                          Materias
-                        </Button>
-                      </div>
+                    <div className="d-flex justify-content-center gap-2">
+    <OverlayTrigger
+      placement="top"
+      overlay={<Tooltip id={`tooltip-edit-${student._id}`}>Editar Alumno</Tooltip>}
+    >
+      <Button
+        variant="primary"
+        size="sm"
+        onClick={() => handleOpenModal(student)}
+        className="d-flex align-items-center"
+      >
+        <i className="bi bi-pencil text-white"></i>
+      </Button>
+    </OverlayTrigger>
+
+    <OverlayTrigger
+      placement="top"
+      overlay={<Tooltip id={`tooltip-assignments-${student._id}`}>Materias</Tooltip>}
+    >
+      <Button
+        variant="info"
+        size="sm"
+        onClick={() => handleOpenAssignmentModal(student)}
+        className="d-flex align-items-center"
+      >
+        <i className="bi bi-book text-white"></i>
+      </Button>
+    </OverlayTrigger>
+
+    <OverlayTrigger
+      placement="top"
+      overlay={
+        <Tooltip id={`tooltip-toggle-${student._id}`}>
+          {student.active ? "Desactivar Alumno" : "Activar Alumno"}
+        </Tooltip>
+      }
+    >
+      <Button
+        variant={student.active ? "success" : "danger"}
+        size="sm"
+        onClick={() => handleOpenActivationModal(student)}
+        className="d-flex align-items-center"
+      >
+        <i className={`bi ${student.active ? "bi-toggle-on" : "bi-toggle-off"} text-white`}></i>
+      </Button>
+    </OverlayTrigger>
+    <OverlayTrigger
+          placement="top"
+          overlay={<Tooltip id={`tooltip-view-${student._id}`}>Ver Materias</Tooltip>}
+        >
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => handleNavigateToSubjects(student._id)}
+            className="d-flex align-items-center"
+          >
+            <i className="bi bi-eye text-white"></i>
+          </Button>
+        </OverlayTrigger>
+  </div>
                     </td>
                   </tr>
                 ))}
@@ -109,12 +187,19 @@ function Studentstable() {
         />
 
         <StudentAssignmentsModal
-        saveAssignments={createAssignments}
+          saveAssignments={createAssignments}
           show={showAssignmentModal}
           handleClose={handleCloseAssignmentModal}
           student={selectedStudentForAssignments}
           refreshStudentsData={refreshStudentsData}
           editAssignments={editAssignments}
+        />
+
+        <StudentChangeStateModal
+          show={showActivationModal}
+          handleClose={handleCloseActivationModal}
+          student={studentToActivate}
+          handleStateChange={handleStudentStateChange}
         />
       </Container>
     </>
