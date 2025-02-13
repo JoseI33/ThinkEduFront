@@ -81,7 +81,7 @@ const StudentModal = ({ show, handleClose, selectedStudent, createNewStudent, ed
             <Form.Control
               type="text"
               isInvalid={!!inputErrors.name}
-              placeholder="Nombre del alumno"
+              placeholder="Nombre "
               value={studentData.name}
               onChange={(e) => setStudentData({ ...studentData, name: e.target.value })}
             />
@@ -93,7 +93,7 @@ const StudentModal = ({ show, handleClose, selectedStudent, createNewStudent, ed
             <Form.Control
               type="text"
               isInvalid={!!inputErrors.lastName}
-              placeholder="Apellido del alumno"
+              placeholder="Apellido "
               value={studentData.lastName}
               onChange={(e) => setStudentData({ ...studentData, lastName: e.target.value })}
             />
@@ -117,7 +117,7 @@ const StudentModal = ({ show, handleClose, selectedStudent, createNewStudent, ed
             <Form.Control
               type="number"
               isInvalid={!!inputErrors.telephone}
-              placeholder="Teléfono del alumno"
+              placeholder="Teléfono "
               value={studentData.telephone}
               onChange={(e) => setStudentData({ ...studentData, telephone: e.target.value })}
             />
@@ -128,7 +128,7 @@ const StudentModal = ({ show, handleClose, selectedStudent, createNewStudent, ed
             <Form.Label>Dirección</Form.Label>
             <Form.Control
               type="text"
-              placeholder="Dirección del alumno"
+              placeholder="Dirección "
               value={studentData.address}
               onChange={(e) => setStudentData({ ...studentData, address: e.target.value })}
             />
@@ -139,7 +139,7 @@ const StudentModal = ({ show, handleClose, selectedStudent, createNewStudent, ed
             <Form.Control
               type="number"
               isInvalid={!!inputErrors.age}
-              placeholder="Edad del alumno"
+              placeholder="Edad "
               value={studentData.age}
               onChange={(e) => setStudentData({ ...studentData, age: e.target.value })}
             />

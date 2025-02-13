@@ -35,3 +35,21 @@ export const editStudent = async(student, id) =>{
         return []
     }
 }
+export const createAssignments = async(body) =>{
+    try{
+       return (await instance.post(`/assignment`, body)).data
+    } 
+    catch(e){
+        console.log(e)
+        return []
+    }
+}
+export const editAssignments = async(body) =>{
+    try{
+       return (await instance.put(`/assignment`, body)).data
+    } 
+    catch(e){
+        console.log(e)
+        return []
+    }
+}

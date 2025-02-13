@@ -3,7 +3,8 @@ import { Container, Table, Button } from "react-bootstrap";
 import ColorSchemesExample3 from "./NavbarStudent";
 import useStudentsTable from "./hooks/useStudentsTable";
 import StudentModal from "./StudentModal";
-import { createNewStudent, editStudent } from "../../../utils/common"; // Import API functions
+import StudentAssignmentsModal from "./StudentAssignmentsModal";
+import { createNewStudent, editStudent, createAssignments, editAssignments } from "../../../utils/common"; // Import API functions
 import { studentDataInitialValues } from "../../../common/initialStates";
 
 function Studentstable() {
@@ -12,14 +13,29 @@ function Studentstable() {
   const [selectedStudent, setSelectedStudent] = useState(null); // Store selected student for editing
   const [studentData, setStudentData] = useState(studentDataInitialValues);
 
-  const handleCloseModal = () =>{
-    setShowModal(false)
-    setStudentData(studentDataInitialValues)
-  }
+  // State for Assignment Modal
+  const [showAssignmentModal, setShowAssignmentModal] = useState(false);
+  const [selectedStudentForAssignments, setSelectedStudentForAssignments] = useState(null);
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setStudentData(studentDataInitialValues);
+  };
 
   const handleOpenModal = (student = null) => {
     setSelectedStudent(student);
     setShowModal(true);
+  };
+
+  // Handle Assignment Modal
+  const handleOpenAssignmentModal = (student) => {
+    setSelectedStudentForAssignments(student);
+    setShowAssignmentModal(true);
+  };
+
+  const handleCloseAssignmentModal = () => {
+    setShowAssignmentModal(false);
+    setSelectedStudentForAssignments(null);
   };
 
   return (
@@ -28,13 +44,10 @@ function Studentstable() {
       <Container className="mt-4">
         <h1>Lista de Alumnos</h1>
         <div className="d-flex justify-content-end w-100 mb-3">       
-  <Button 
-    variant="success" 
-    onClick={() => handleOpenModal()}
-  >
-    Crear Alumno Nuevo
-  </Button>
-</div>
+          <Button variant="success" onClick={() => handleOpenModal()}>
+            Crear Alumno Nuevo
+          </Button>
+        </div>
 
         <div className="table-responsive">
           <Table striped bordered hover>
@@ -57,9 +70,7 @@ function Studentstable() {
                     <td>{student.degree}</td>
                     <td>{student._id}</td>
                     <td>
-                      <span
-                        style={{ color: student.paymentState ? "green" : "orange" }}
-                      >
+                      <span style={{ color: student.paymentState ? "green" : "orange" }}>
                         {student.paymentState ? "Sí" : "No"}
                       </span>
                     </td>
@@ -71,6 +82,12 @@ function Studentstable() {
                           onClick={() => handleOpenModal(student)}
                         >
                           Editar
+                        </Button>
+                        <Button
+                          variant="info"
+                          onClick={() => handleOpenAssignmentModal(student)}
+                        >
+                          Materias
                         </Button>
                       </div>
                     </td>
@@ -89,6 +106,15 @@ function Studentstable() {
           refreshStudentsData={refreshStudentsData}
           setStudentData={setStudentData}
           studentData={studentData}
+        />
+
+        <StudentAssignmentsModal
+        saveAssignments={createAssignments}
+          show={showAssignmentModal}
+          handleClose={handleCloseAssignmentModal}
+          student={selectedStudentForAssignments}
+          refreshStudentsData={refreshStudentsData}
+          editAssignments={editAssignments}
         />
       </Container>
     </>
