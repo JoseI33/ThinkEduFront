@@ -10,6 +10,7 @@ import { studentDataInitialValues } from "../../../common/initialStates";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Studentstable() {
   const { studentsData, refreshStudentsData } = useStudentsTable();
@@ -63,12 +64,18 @@ function Studentstable() {
   };
 
   const handleStudentStateChange = async () => {
-    if (studentToActivate) {
-      const newState = !studentToActivate.active;
-      await changeStudentState({ estado: newState }, studentToActivate._id);
-      await refreshStudentsData();
-      handleCloseActivationModal();
+    try{
+
+      if (studentToActivate) {
+        const newState = !studentToActivate.active;
+        await changeStudentState({ estado: newState }, studentToActivate._id);
+        await refreshStudentsData();
+        toast.success("Cambiado el estado del alumno correctamente", {position: 'bottom-right'});
+      }
+    }catch(err){
+      toast.error("Error al cambiar el estado del alumno", {position: 'bottom-right'});
     }
+    handleCloseActivationModal();
   };
 
   return (

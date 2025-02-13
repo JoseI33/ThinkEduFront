@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
+import { toast } from "react-toastify";
 
 const subjectsList = [
   { name: "mathematics", label: "Matematicas" },
@@ -53,41 +54,44 @@ const StudentAssignmentsModal = ({ show, handleClose, student, saveAssignments, 
   };
 
   const handleSubmit = async() => {
-    let formattedData = [];
+try{
+  let formattedData = [];
 
-    if (!studentHasAssignments) {
-      // Prepare new assignments data for save
-      formattedData = assignments.map((assignment) => ({
-        student: student._id,
-        degree: assignment.degree,
-        subjects: Object.fromEntries(
-          subjectsList.map((subject) => [
-            subject.name.charAt(0).toUpperCase() + subject.name.slice(1), // Ensure capitalizing the first letter
-            assignment[subject.name],
-          ])
-        )
-      }));
-     await saveAssignments(formattedData);
-    } else {
-      console.log('Editing existing assignments');
-      formattedData = assignments.map((assignment) => ({
-        id: assignment.id,
-        student: student._id,
-        degree: assignment.degree,
-        subjects: Object.fromEntries(
-          subjectsList.map((subject) => [
-            subject.name.charAt(0).toUpperCase() + subject.name.slice(1),
-            assignment[subject.name],
-          ])
-        )
-      }));
-      console.log(formattedData, 'editData')
-      await editAssignments(formattedData)
-    }
+  if (!studentHasAssignments) {
+    // Prepare new assignments data for save
+    formattedData = assignments.map((assignment) => ({
+      student: student._id,
+      degree: assignment.degree,
+      subjects: Object.fromEntries(
+        subjectsList.map((subject) => [
+          subject.name.charAt(0).toUpperCase() + subject.name.slice(1), // Ensure capitalizing the first letter
+          assignment[subject.name],
+        ])
+      )
+    }));
+   await saveAssignments(formattedData);
+   toast.success("Materias creadas con exito", {position: 'bottom-right'});
+  } else {
+    formattedData = assignments.map((assignment) => ({
+      id: assignment.id,
+      student: student._id,
+      degree: assignment.degree,
+      subjects: Object.fromEntries(
+        subjectsList.map((subject) => [
+          subject.name.charAt(0).toUpperCase() + subject.name.slice(1),
+          assignment[subject.name],
+        ])
+      )
+    }));
+    await editAssignments(formattedData)
+    toast.success("Materias editadas con exito", {position: 'bottom-right'});
+  }
 
-    console.log(formattedData, "formattedData");
-   await refreshStudentsData();
-    handleClose();
+ await refreshStudentsData();
+}catch(err){
+toast.error("Error al administrar las materias", {position: 'bottom-right'});
+}
+handleClose();
   };
 
   return (

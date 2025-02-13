@@ -71,3 +71,12 @@ export const getStudentById = async(id) =>{
         return []
     }
 }
+export const createAccount = async(body) =>{
+    try{
+       return (await instance.post(`/register`, body)).data
+    } 
+    catch(e){
+        console.log(e)
+        return []
+    }
+}

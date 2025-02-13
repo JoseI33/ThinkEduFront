@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Alert } from "react-bootstrap";
 import { studentDataInitialValues } from "../../../common/initialStates";
+import { toast } from "react-toastify";
 
 
 const StudentModal = ({ show, handleClose, selectedStudent, createNewStudent, editStudent, refreshStudentsData, studentData, setStudentData }) => {
@@ -48,20 +49,27 @@ const StudentModal = ({ show, handleClose, selectedStudent, createNewStudent, ed
   };
 
   const handleSubmit = async () => {
-    if (!validateFields()) {
-      setShowError(true);
-      return;
+    try{
+      if (!validateFields()) {
+        setShowError(true);
+        return;
+      }
+  
+      if (selectedStudent) {
+        await editStudent(studentData, selectedStudent._id);
+        toast.success("Estudiante editado con exito", {position: 'bottom-right'});
+      } else {
+        await createNewStudent(studentData);
+        toast.success("Estudiante creado con exito", {position: 'bottom-right'});
+      }
+      
+      await refreshStudentsData();
+      setStudentData(studentDataInitialValues)
     }
-
-    if (selectedStudent) {
-      await editStudent(studentData, selectedStudent._id);
-    } else {
-      await createNewStudent(studentData);
+    catch(err){
+      toast.error("Error al crear un estudiante", {position: 'bottom-right'});
     }
-    
-    await refreshStudentsData();
     handleClose();
-    setStudentData(studentDataInitialValues)
   };
 
   return (
@@ -105,6 +113,7 @@ const StudentModal = ({ show, handleClose, selectedStudent, createNewStudent, ed
             <Form.Control
               type="number"
               isInvalid={!!inputErrors.degree}
+              disabled={Boolean(selectedStudent)}
               placeholder="Año de cursado"
               value={studentData.degree}
               onChange={(e) => setStudentData({ ...studentData, degree: e.target.value })}
