@@ -17,7 +17,7 @@ const correInstitucion = useMemo(()=> {
     <>
       <ColorSchemesExample />
       <Container className="mb-4">
-        <h1 className="text-center">Administración</h1>
+        <h1 className="text-center">Inicio</h1>
         <div className="table-responsive">
           <Table striped bordered hover size="sm">
             <tbody>

@@ -1,81 +1,81 @@
 import React, { useState } from "react";
-import { Container, Table, Button, Modal, Form, Alert } from "react-bootstrap";
+import { Container, Table, Button } from "react-bootstrap";
 import ColorSchemesExample3 from "./NavbarStudent";
+import useStudentsTable from "./hooks/useStudentsTable";
+import StudentModal from "./StudentModal";
+import StudentAssignmentsModal from "./StudentAssignmentsModal";
+import StudentChangeStateModal from "./StudentChangeStateModal";
+import { createNewStudent, editStudent, createAssignments, editAssignments, changeStudentState } from "../../../utils/common";
+import { studentDataInitialValues } from "../../../common/initialStates";
+import "bootstrap-icons/font/bootstrap-icons.css";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Studentstable() {
-  const [students, setStudents] = useState([
-    {
-      id: 1,
-      nombre: "John",
-      apellido: "Doe",
-      anioCursado: "3er año",
-      numeroExpediente: "12345",
-      cuotaAlDia: true,
-      activo: true,
-    },
-
-  ]);
-
+  const { studentsData, refreshStudentsData } = useStudentsTable();
   const [showModal, setShowModal] = useState(false);
-  const [newStudent, setNewStudent] = useState({
-    id: Date.now(),
-    nombre: "",
-    apellido: "",
-    anioCursado: "",
-    numeroExpediente: "",
-    cuotaAlDia: true,
-    activo: true,
-  });
+  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [studentData, setStudentData] = useState(studentDataInitialValues);
 
-  const [randomId, setRandomId] = useState(null);
-  const [showError, setShowError] = useState(false);
 
-  const handleViewDetails = (id) => {
-    console.log("Ver detalles del alumno con ID:", id);
+  const [showAssignmentModal, setShowAssignmentModal] = useState(false);
+  const [selectedStudentForAssignments, setSelectedStudentForAssignments] = useState(null);
+
+
+  const [showActivationModal, setShowActivationModal] = useState(false);
+  const [studentToActivate, setStudentToActivate] = useState(null);
+  const navigate = useNavigate();
+
+  const handleNavigateToSubjects = (studentId) => {
+    navigate(`/Subjects/${studentId}`);
   };
 
-  const handleDeactivate = (id) => {
-    console.log("Dar de baja al alumno con ID:", id);
-    const updatedStudents = students.map((student) =>
-      student.id === id ? { ...student, activo: false } : student
-    );
-    setStudents(updatedStudents);
-  };
-
-  const handleCreateStudent = () => {
-    if (!newStudent.nombre || !newStudent.apellido || !newStudent.anioCursado) {
-      setShowError(true);
-      return;
-    }
-
-    const randomId = Math.floor(Math.random() * 1000000); 
-
-    setStudents([
-      ...students,
-      {
-        id: randomId,
-        nombre: newStudent.nombre,
-        apellido: newStudent.apellido,
-        anioCursado: newStudent.anioCursado,
-        numeroExpediente: randomId.toString(), 
-        cuotaAlDia: newStudent.cuotaAlDia,
-        activo: newStudent.activo,
-      },
-    ]);
-
+  const handleCloseModal = () => {
     setShowModal(false);
-    setNewStudent({
-      id: Date.now(),
-      nombre: "",
-      apellido: "",
-      anioCursado: "",
-      numeroExpediente: "",
-      cuotaAlDia: true,
-      activo: true,
-    });
+    setStudentData(studentDataInitialValues);
+  };
 
-    setRandomId(randomId); 
-    setShowError(false); 
+  const handleOpenModal = (student = null) => {
+    setSelectedStudent(student);
+    setShowModal(true);
+  };
+
+  // Handle Assignment Modal
+  const handleOpenAssignmentModal = (student) => {
+    setSelectedStudentForAssignments(student);
+    setShowAssignmentModal(true);
+  };
+
+  const handleCloseAssignmentModal = () => {
+    setShowAssignmentModal(false);
+    setSelectedStudentForAssignments(null);
+  };
+
+
+  const handleOpenActivationModal = (student) => {
+    setStudentToActivate(student);
+    setShowActivationModal(true);
+  };
+
+  const handleCloseActivationModal = () => {
+    setShowActivationModal(false);
+    setStudentToActivate(null);
+  };
+
+  const handleStudentStateChange = async () => {
+    try{
+
+      if (studentToActivate) {
+        const newState = !studentToActivate.active;
+        await changeStudentState({ estado: newState }, studentToActivate._id);
+        await refreshStudentsData();
+        toast.success("Cambiado el estado del alumno correctamente", {position: 'bottom-right'});
+      }
+    }catch(err){
+      toast.error("Error al cambiar el estado del alumno", {position: 'bottom-right'});
+    }
+    handleCloseActivationModal();
   };
 
   return (
@@ -83,6 +83,12 @@ function Studentstable() {
       <ColorSchemesExample3 />
       <Container className="mt-4">
         <h1>Lista de Alumnos</h1>
+        <div className="d-flex justify-content-end w-100 mb-3">       
+          <Button variant="success" onClick={() => handleOpenModal()}>
+            Crear Alumno Nuevo
+          </Button>
+        </div>
+
         <div className="table-responsive">
           <Table striped bordered hover>
             <thead>
@@ -95,127 +101,113 @@ function Studentstable() {
               </tr>
             </thead>
             <tbody>
-              {students.map((student) => (
-                <tr key={student.id}>
-                  <td className="text-nowrap">
-                    {student.nombre} {student.apellido}
-                  </td>
-                  <td>{student.anioCursado}</td>
-                  <td>{student.numeroExpediente}</td>
-                  <td>
-                    <span
-                      style={{ color: student.cuotaAlDia ? "green" : "orange" }}
-                    >
-                      {student.cuotaAlDia ? "Sí" : "No"}
-                    </span>
-                  </td>
-                  <td>
-                    <div className="d-flex flex-column">
-                      <Button
-                        variant="primary"
-                        className="mb-2"
-                        onClick={() => handleViewDetails(student.id)}
-                      >
-                        Ver Detalles
-                      </Button>
-                      {student.activo ? (
-                        <Button
-                          variant="danger"
-                          onClick={() => handleDeactivate(student.id)}
-                        >
-                          Dar de Baja
-                        </Button>
-                      ) : (
-                        <span style={{ color: "red" }}>Inactivo</span>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
+              {studentsData.length > 0 &&
+                studentsData.map((student) => (
+                  <tr key={student._id}>
+                    <td className="text-nowrap">
+                      {student.name} {student.lastName}
+                    </td>
+                    <td>{student.degree}</td>
+                    <td>{student._id}</td>
+                    <td>
+                      <span style={{ color: student.paymentState ? "green" : "orange" }}>
+                        {student.paymentState ? "Sí" : "No"}
+                      </span>
+                    </td>
+                    <td>
+                    <div className="d-flex justify-content-center gap-2">
+    <OverlayTrigger
+      placement="top"
+      overlay={<Tooltip id={`tooltip-edit-${student._id}`}>Editar Alumno</Tooltip>}
+    >
+      <Button
+        variant="primary"
+        size="sm"
+        onClick={() => handleOpenModal(student)}
+        className="d-flex align-items-center"
+      >
+        <i className="bi bi-pencil text-white"></i>
+      </Button>
+    </OverlayTrigger>
+
+    <OverlayTrigger
+      placement="top"
+      overlay={<Tooltip id={`tooltip-assignments-${student._id}`}>Materias</Tooltip>}
+    >
+      <Button
+        variant="info"
+        size="sm"
+        onClick={() => handleOpenAssignmentModal(student)}
+        className="d-flex align-items-center"
+      >
+        <i className="bi bi-book text-white"></i>
+      </Button>
+    </OverlayTrigger>
+
+    <OverlayTrigger
+      placement="top"
+      overlay={
+        <Tooltip id={`tooltip-toggle-${student._id}`}>
+          {student.active ? "Desactivar Alumno" : "Activar Alumno"}
+        </Tooltip>
+      }
+    >
+      <Button
+        variant={student.active ? "success" : "danger"}
+        size="sm"
+        onClick={() => handleOpenActivationModal(student)}
+        className="d-flex align-items-center"
+      >
+        <i className={`bi ${student.active ? "bi-toggle-on" : "bi-toggle-off"} text-white`}></i>
+      </Button>
+    </OverlayTrigger>
+    <OverlayTrigger
+          placement="top"
+          overlay={<Tooltip id={`tooltip-view-${student._id}`}>Ver Materias</Tooltip>}
+        >
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => handleNavigateToSubjects(student._id)}
+            className="d-flex align-items-center"
+          >
+            <i className="bi bi-eye text-white"></i>
+          </Button>
+        </OverlayTrigger>
+  </div>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </Table>
         </div>
-        <Button variant="success" onClick={() => setShowModal(true)}>
-          Crear Alumno Nuevo
-        </Button>
 
-        <Modal show={showModal} onHide={() => setShowModal(false)}>
-          <Modal.Header closeButton>
-            <Modal.Title>Crear Alumno Nuevo</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            {showError && (
-              <Alert variant="danger" className="mb-3">
-                Por favor, completa todos los campos obligatorios.
-              </Alert>
-            )}
-            <Form>
-              <Form.Group controlId="nombre">
-                <Form.Label>Nombre</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Nombre del alumno"
-                  value={newStudent.nombre}
-                  onChange={(e) =>
-                    setNewStudent({ ...newStudent, nombre: e.target.value })
-                  }
-                />
-              </Form.Group>
-              <Form.Group controlId="apellido">
-                <Form.Label>Apellido</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Apellido del alumno"
-                  value={newStudent.apellido}
-                  onChange={(e) =>
-                    setNewStudent({ ...newStudent, apellido: e.target.value })
-                  }
-                />
-              </Form.Group>
-              <Form.Group controlId="anioCursado">
-                <Form.Label>Año de Cursado</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Año de cursado del alumno"
-                  value={newStudent.anioCursado}
-                  onChange={(e) =>
-                    setNewStudent({
-                      ...newStudent,
-                      anioCursado: e.target.value,
-                    })
-                  }
-                />
-              </Form.Group>
-              <Form.Group controlId="numeroExpediente">
-                <Form.Label>Numero Expediente (ID)</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="ID del alumno"
-                  value={newStudent.numeroExpediente}
-                  onChange={(e) =>
-                    setNewStudent({
-                      ...newStudent,
-                      numeroExpediente: e.target.value,
-                    })
-                  }
-                  disabled 
-                />
-              </Form.Group>
-            </Form>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowModal(false)}>
-              Cancelar
-            </Button>
-            <Button
-              variant="primary"
-              className="button-create"
-              onClick={handleCreateStudent}
-            >
-              Crear Alumno
-            </Button>
-          </Modal.Footer>
-        </Modal>
+        <StudentModal
+          show={showModal}
+          handleClose={handleCloseModal}
+          selectedStudent={selectedStudent}
+          createNewStudent={createNewStudent}
+          editStudent={editStudent}
+          refreshStudentsData={refreshStudentsData}
+          setStudentData={setStudentData}
+          studentData={studentData}
+        />
+
+        <StudentAssignmentsModal
+          saveAssignments={createAssignments}
+          show={showAssignmentModal}
+          handleClose={handleCloseAssignmentModal}
+          student={selectedStudentForAssignments}
+          refreshStudentsData={refreshStudentsData}
+          editAssignments={editAssignments}
+        />
+
+        <StudentChangeStateModal
+          show={showActivationModal}
+          handleClose={handleCloseActivationModal}
+          student={studentToActivate}
+          handleStateChange={handleStudentStateChange}
+        />
       </Container>
     </>
   );

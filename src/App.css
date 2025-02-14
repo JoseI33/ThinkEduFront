@@ -25,7 +25,6 @@ footer {
   color: white;
   padding: 20px;
   text-align: center;
-  margin-top: 20%;
   width: 100%;
   
 }
@@ -57,7 +56,21 @@ footer {
 }
 
 .login-container button[type="submit"]:hover {
+  background-color: #72597e;
+}
+.login-container button[type="button"] {
   background-color: #9977AA;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-left: 5px;
+}
+
+.login-container button[type="button"]:hover {
+  background-color: #72597e;
 }
 
 .custom-ol {

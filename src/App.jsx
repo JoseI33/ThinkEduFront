@@ -19,7 +19,7 @@ const App = () => {
             <Route element={<ProtectedRoute />}>
             <Route exact path="/Home" element={<Home />} />
             <Route exact path="/Studentstable" element={<Studentstable />} />
-            <Route exact path="/Subjects" element={<Subjects />} />
+            <Route exact path="/Subjects/:id" element={<Subjects />} />
             <Route exact path="/Aboutus" element={<Aboutus />} />
             </Route>
             <Route exact path="*" element={<Error />} />

@@ -37,14 +37,14 @@ function ColorSchemesExample() {
                 <PiStudentBold size="2rem" className="mb-2" />
                 Students
               </NavLink>
-              <NavLink className="nav-link active mx-2" to="/Subjects"> 
+{/*               <NavLink className="nav-link active mx-2" to="/Subjects"> 
                 {" "}
                 <BiBookBookmark size="2rem" className="mb-2" /> Subjects
                 {" "}
-              </NavLink>
+              </NavLink> */}
             </Nav>
             <Nav>
-              <div onClick={handleLogOut} className="nav-link active mx-2" to="/">
+              <div onClick={handleLogOut} className="nav-link active mx-2" to="/" style={{ cursor: "pointer" }}>
                 <MdLogout onClick={handleLogOut} size="2rem" className="mb-2" />
                 Logout
               </div>
