@@ -49,9 +49,7 @@ Iniciar el servidor local para acceder a la aplicación desde el navegador ingre
 
 ## Autores 👩🏻‍💻🧑🏻‍💻
 - [Facundo Chavez](https://github.com/Facuprogram)
-- [Candela Demelchiorre](https://github.com/dmlcande)
-- [Jonathan Gomez](https://github.com/Lovestj04)
-- [Franco Cali](https://github.com/heyfrank99)
+- [José Imhoff](https://github.com/JoseI33)
 
 ---
 
