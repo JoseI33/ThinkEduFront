@@ -1,6 +1,8 @@
 # Proyecto de Administración Escolar [Frontend]
 <img src="https://media1.giphy.com/media/KiXl0vfc9XIIM/giphy.gif?cid=ecf05e473vn2itam8uhxr3z3417txkpoab7gpqfjmnl48r1y&ep=v1_gifs_search&rid=giphy.gif&ct=g" />
 
+> Front Desploy: https://think-edu-front.vercel.app/
+
 > El código está disponible en la rama [THINK-EDU - main](https://github.com/Lovestj04/ThinkEduFront/tree/main)
 
 Nuestro proyecto se centra en el desarrollo de una plataforma de administración escolar, diseñada para abarcar todos los niveles educativos. Es exclusiva  y solo para el uso de profesores, quienes acceden mediante sus credenciales proporcionadas por su institución, a través de correo electrónico y contraseña. El backend correspondiente se encuentra en [este repositorio](https://github.com/Facuprogram/THINK-EDU).
@@ -49,7 +51,9 @@ Iniciar el servidor local para acceder a la aplicación desde el navegador ingre
 
 ## Autores 👩🏻‍💻🧑🏻‍💻
 - [Facundo Chavez](https://github.com/Facuprogram)
-- [José Imhoff](https://github.com/JoseI33)
+- [Candela Demelchiorre](https://github.com/dmlcande)
+- [Jonathan Gomez](https://github.com/Lovestj04)
+- [Franco Cali](https://github.com/heyfrank99)
 
 ---
 
