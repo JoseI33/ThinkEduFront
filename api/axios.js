@@ -6,7 +6,7 @@ console.log(url);
 
 const instance = axios.create({
 
-    baseURL: url ? url : "https://think-edu.onrender.com/",
+    baseURL: url ? url : "https://think-edu.vercel.app/", //"https://think-edu.onrender.com/
     timeout: 4000,
     headers: ['content-type":"aplication/json']
 });
