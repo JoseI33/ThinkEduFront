@@ -1,15 +1,16 @@
 import axios from "axios";
 
-const url = import.meta.env.VITE_URL_BACKEND;
+const url = import.meta.env.API_URL || "https://think-edu.vercel.app/";
 
-console.log(url);
+console.log("Backend URL", url);
 
 const instance = axios.create({
 
-    baseURL: url ? url : "https://think-edu.vercel.app/", //"https://think-edu.onrender.com/
+    baseURL: url, 
     timeout: 4000,
-    headers: ['content-type":"aplication/json']
+    headers: ["content-type:","aplication/json"]
 });
 
 
 export default instance 
+
