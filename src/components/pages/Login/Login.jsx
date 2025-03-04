@@ -134,7 +134,7 @@ const Login = () => {
                 <Form.Control
                   type="text"
                   name="username"
-                  placeholder="Ingresa tu usuario"
+                  placeholder="Ingresa tu correo"
                   value={formData.username}
                   onChange={handleChange}
                   isInvalid={!!errors.username}
