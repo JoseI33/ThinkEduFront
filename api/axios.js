@@ -7,7 +7,7 @@ console.log("Backend URL", url);
 const instance = axios.create({
 
     baseURL: url, 
-    timeout: 10000,
+    timeout: 4000,
     headers: {
         "Content-Type": "application/json"
     }
