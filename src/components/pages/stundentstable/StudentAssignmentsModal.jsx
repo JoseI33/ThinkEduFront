@@ -18,6 +18,7 @@ const StudentAssignmentsModal = ({ show, handleClose, student, saveAssignments, 
   const [assignments, setAssignments] = useState([]);
   const studentHasAssignments = useMemo(() => student?.assignments?.length > 0, [student]);
 
+
   useEffect(() => {
     if (student) {
       if (studentHasAssignments) {
@@ -47,10 +48,24 @@ const StudentAssignmentsModal = ({ show, handleClose, student, saveAssignments, 
     }
   }, [student, studentHasAssignments]);
 
+  const [errors, setErrors] = useState({})
+
   const handleChange = (index, subject, value) => {
+    const numericValue = parseInt(value, 10); 
     const updatedAssignments = [...assignments];
-    updatedAssignments[index][subject] = value;
-    setAssignments(updatedAssignments);
+    const updateErrors = {...errors};
+
+    if(numericValue < 1 || numericValue > 10)
+      {
+        updateErrors[`${index}-${subject}`] = "La nota debe ser entre 1 y 10.";
+      } else {
+        delete updateErrors[`${index}-${subject}`]
+        updatedAssignments[index][subject] = numericValue;
+        setAssignments(updatedAssignments);
+      }
+
+      setErrors(updateErrors)
+
   };
 
   const handleSubmit = async() => {
@@ -108,11 +123,16 @@ handleClose();
                 <Form.Label>{subject.label}</Form.Label>
                 <Form.Control
                   type="number"
+                  min={1}
+                  max={10}
                   value={assignment[subject.name] || ""} // Ensure value is empty when no value is set
                   onChange={(e) =>
-                    handleChange(index, subject.name, e.target.value) // Pass 'name' for update
-                  }
+                    handleChange(index, subject.name, e.target.value)} // Pass 'name' for update
+                    isInvalid={!!errors[`${index}-${subject.name}`]}
                 />
+                <Form.Control.Feedback type="invalid">
+                  {errors[`${index}-${subject.name}`]}
+                </Form.Control.Feedback>
               </Form.Group>
             ))}
           </div>
